@@ -13,7 +13,7 @@ ivy-express-buttin.liquid => snippets
 products.ivy.liquid & cart.ivy.liquid => templates
 
 
-**2. Add Ivy Buttons to Theme
+**2. Add Ivy Buttons to Theme**
 
 Cart
 
