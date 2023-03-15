@@ -46,7 +46,12 @@ Add the following code snippet to the `checkout.liquid` to enable your customers
 {% if order.attributes["first_time_accessed"] %}
     <script>
         fetch("https://" + Shopify.shop + "/cart/clear.js");
-        fetch("https://netshake.io/ivy/express/updateOrder.php?id={{ order.id }}", {"mode": "cors"});
+
+        const data = {
+            id: {{ order.id }},
+        }
+
+        fetch("{ custom_ivy_url }/order/update", { "body": JSON.stringify(data), "method": "POST", "headers": { "Content-Type": "application/json" } });
     </script>
 {% endif %}
 ```

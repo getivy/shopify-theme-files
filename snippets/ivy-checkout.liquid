@@ -1,5 +1,15 @@
 <script async src="https://cdn.sand.getivy.de/button.js"></script>
-<script async src="https://cdn.sand.getivy.de/banner.js" onload="initIvy()"></script>
+<script
+  async
+  src="https://cdn.sand.getivy.de/banner.js"
+  onload="initIvy()"></script>
+
+{% comment %}
+Uncomment this as soon as you want to go live!
+
+<script async src="https://cdn.getivy.de/button.js"></script>
+<script async src="https://cdn.getivy.de/banner.js" onload="initIvy()"></script>
+{% endcomment %}
 
 <script>
   function ivyCheckout() {
@@ -20,7 +30,7 @@
       line2: '{{ checkout.billing_address.address2 }}',
       city: '{{ checkout.billing_address.city }}',
       zipCode: '{{ checkout.billing_address.zip }}',
-      country: '{{ checkout.billing_address.country_code }}',
+      country: '{{ checkout.billing_address.country_code }}'
     }
 
     const prefill = {
@@ -30,8 +40,8 @@
     const totalShippingPriceSet = {
       shop_money: {
         amount: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
-        currency_code: '{{ checkout.currency }}',
-      },
+        currency_code: '{{ checkout.currency }}'
+      }
     }
 
     const metadata = {
@@ -40,19 +50,17 @@
         {
           price: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
           price_set: {
-            shop_money: totalShippingPriceSet,
+            shop_money: totalShippingPriceSet
           },
           source: "{{ checkout.shipping_method.handle }}",
-          title: "{{ checkout.shipping_method.title }}",
-        },
+          title: "{{ checkout.shipping_method.title }}"
+        }
       ],
       totalShippingPriceSet,
       email: '{{ checkout.email }}'
     }
 
-    const lineItems = [
-      {% for item in checkout.line_items %}
-        {
+    const lineItems = [{% for item in checkout.line_items %}{
           "name": "{{ item.title }}",
           "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
           "singleVat": 0,
@@ -60,15 +68,14 @@
           "quantity": {{ item.quantity }},
           "referenceId": "{{ item.variant.id }}"
         }
-      {% endfor %}
-    ]
+      {% endfor %}]
 
     const data = {
       price,
       billingAddress,
       prefill,
       lineItems,
-      metadata,
+      metadata
     }
 
     fetch('{ custom_ivy_url }/checkout/standard/create', {
@@ -80,19 +87,24 @@
     }).then(response => response.json()).then(data => {
       startIvyCheckout(data.redirectUrl, 'popup')
     })
-  }
-
-  (function($) {
+  }(function($) {
     $(document).on("page:load page:change", function() {
       if (Shopify.Checkout.step == 'payment_method') {
         const xpath = "//div[@class='section section--payment-method']//label[contains(text(),'Ivy')]"
         const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
-        if(ivyPaymentLabel) {
+        if (ivyPaymentLabel) {
           const ivyPaymentMethod = document.createElement("div")
-          ivyPaymentMethod.className="ivy-banner"
-          ivyPaymentMethod.dataset.variant="shopify-payment"
-          ivyPaymentLabel.replaceWith(ivyPaymentMethod)
+          ivyPaymentMethod.className = "ivy-banner"
+          ivyPaymentMethod.dataset.variant = "shopify-payment"
+          ivyPaymentLabel
+            .replaceWith(ivyPaymentMethod)
+            ivyPaymentMethod
+            .parentElement
+            .previousElementSibling
+            .style
+            .verticalAlign = "middle"
+
           window.initIvy && window.initIvy()
         }
       }
@@ -101,10 +113,10 @@
         const xpath = "//li[@class='payment-method-list__item']/span[contains(text(),'Ivy')]"
         const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 
-        if(ivyPaymentLabel) {
+        if (ivyPaymentLabel) {
           ivyPaymentLabel.innerHTML = "Online-Banking"
 
-          $('#continue_button').on('click', function (event) {
+          $('#continue_button').on('click', function(event) {
             event.preventDefault()
             ivyCheckout()
           })
