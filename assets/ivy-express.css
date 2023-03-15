@@ -1,0 +1,42 @@
+button.ivy-express-checkout {
+  min-height: 40px;
+  background-color: transparent;
+  box-sizing: border-box;
+  position: relative;
+  border: none;
+  outline: none;
+  padding: 0;
+  width: 100%;
+  white-space: normal !important;
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 1 1 0%;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  transition: filter 200ms ease 0s, background 200ms ease 0s;
+  column-gap: 5px;
+  border-radius: 5px;
+  background-color: rgb(6, 78, 59);
+}
+button.ivy-express-checkout:hover {
+  filter: brightness(1.2);
+}
+.ivy-express-information {
+  font-family: "Graphik Web", sans-serif;
+  letter-spacing: -0.03em;
+  top: 100%;
+  width: 100%;
+  left: 0px;
+  display: flex;
+  column-gap: 3px;
+  -webkit-box-align: center;
+  align-items: center;
+  color: rgb(6, 78, 59);
+  font-size: 11px;
+  font-weight: 600;
+}

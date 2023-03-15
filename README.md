@@ -6,12 +6,19 @@ In order to integrate Ivy into your Shopify Plus store, please follow these step
 
 Please add the theme files from this repository to the corresponding folders:
 
-ivy-express.js => assets
+assets
+|--- ivy-express.js
+...
 
-ivy-express-buttin.liquid => snippets
+snippets
+|--- ivy-express-button.liquid
+|--- ivy-checkout.liquid
+...
 
-products.ivy.liquid & cart.ivy.liquid => templates
-
+templates
+|--- products.ivy.liquid
+|--- cart.ivy.liquid
+...
 
 **2. Add Ivy Buttons to Theme**
 
@@ -28,17 +35,31 @@ PDP
 ```
 
 Checkout
+
 ```liquid
 {% render 'ivy-express-button', type: 'cart', is_checkout: true %}
 ```
 
-**3. Add script to "Additional Checkout Scripts"**
+**3. Add Ivy to the Standard Checkout**
+
+Add the following code snippet to the `checkout.liquid` to enable your customers to pay green in the checkout.
+
+```liquid
+{% render 'ivy-checkout' %}
+```
+
+**4. Add script to "Additional Checkout Scripts"**
 
 ```liquid
 {% if order.attributes["first_time_accessed"] %}
     <script>
         fetch("https://" + Shopify.shop + "/cart/clear.js");
-        fetch("https://netshake.io/ivy/express/updateOrder.php?id={{ order.id }}", {"mode": "cors"});
+
+        const data = {
+            id: {{ order.id }},
+        }
+
+        fetch("{ custom_ivy_url }/order/update", { "body": JSON.stringify(data), "method": "POST", "headers": { "Content-Type": "application/json" } });
     </script>
 {% endif %}
 ```
