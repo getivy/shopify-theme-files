@@ -6,6 +6,7 @@ In order to integrate Ivy into your Shopify Plus store, please follow these step
 
 Please add the theme files from this repository to the corresponding folders:
 
+```bash
 assets
 |--- ivy-express.js
 ...
@@ -19,6 +20,7 @@ templates
 |--- products.ivy.liquid
 |--- cart.ivy.liquid
 ...
+
 
 **2. Add Ivy Buttons to Theme**
 
