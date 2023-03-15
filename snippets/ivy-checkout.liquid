@@ -1,0 +1,115 @@
+<script async src="https://cdn.sand.getivy.de/button.js"></script>
+<script async src="https://cdn.sand.getivy.de/banner.js" onload="initIvy()"></script>
+
+<script>
+  function ivyCheckout() {
+    const price = {
+      total: {{ checkout.total_price | times: 1.00 | divided_by: 100 }},
+      vat: {{ checkout.tax_price | times: 1.00 | divided_by: 100 }},
+      shipping: {{ checkout.shipping_price | times: 1.00 | divided_by: 100 }},
+      currency: '{{ checkout.currency }}',
+      subTotal: {{ checkout.line_items_subtotal_price | times: 1.00 | divided_by: 100 }}
+    }
+
+    price.totalNet = price.total - price.vat
+
+    const billingAddress = {
+      firstName: '{{ checkout.billing_address.first_name }}',
+      lastName: '{{ checkout.billing_address.last_name }}',
+      line1: '{{ checkout.billing_address.address1 }}',
+      line2: '{{ checkout.billing_address.address2 }}',
+      city: '{{ checkout.billing_address.city }}',
+      zipCode: '{{ checkout.billing_address.zip }}',
+      country: '{{ checkout.billing_address.country_code }}',
+    }
+
+    const prefill = {
+      email: '{{ checkout.email }}'
+    }
+
+    const totalShippingPriceSet = {
+      shop_money: {
+        amount: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
+        currency_code: '{{ checkout.currency }}',
+      },
+    }
+
+    const metadata = {
+      shopifyShippingAddress: {{ checkout.shipping_address | json }},
+      shippingLines: [
+        {
+          price: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
+          price_set: {
+            shop_money: totalShippingPriceSet,
+          },
+          source: "{{ checkout.shipping_method.handle }}",
+          title: "{{ checkout.shipping_method.title }}",
+        },
+      ],
+      totalShippingPriceSet,
+      email: '{{ checkout.email }}'
+    }
+
+    const lineItems = [
+      {% for item in checkout.line_items %}
+        {
+          "name": "{{ item.title }}",
+          "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
+          "singleVat": 0,
+          "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},
+          "quantity": {{ item.quantity }},
+          "referenceId": "{{ item.variant.id }}"
+        }
+      {% endfor %}
+    ]
+
+    const data = {
+      price,
+      billingAddress,
+      prefill,
+      lineItems,
+      metadata,
+    }
+
+    fetch('{ custom_ivy_url }/checkout/standard/create', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then(data => {
+      startIvyCheckout(data.redirectUrl, 'popup')
+    })
+  }
+
+  (function($) {
+    $(document).on("page:load page:change", function() {
+      if (Shopify.Checkout.step == 'payment_method') {
+        const xpath = "//div[@class='section section--payment-method']//label[contains(text(),'Ivy')]"
+        const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+        if(ivyPaymentLabel) {
+          const ivyPaymentMethod = document.createElement("div")
+          ivyPaymentMethod.className="ivy-banner"
+          ivyPaymentMethod.dataset.variant="shopify-payment"
+          ivyPaymentLabel.replaceWith(ivyPaymentMethod)
+          window.initIvy && window.initIvy()
+        }
+      }
+
+      if (Shopify.Checkout.step == 'review') {
+        const xpath = "//li[@class='payment-method-list__item']/span[contains(text(),'Ivy')]"
+        const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+        if(ivyPaymentLabel) {
+          ivyPaymentLabel.innerHTML = "Online-Banking"
+
+          $('#continue_button').on('click', function (event) {
+            event.preventDefault()
+            ivyCheckout()
+          })
+        }
+      }
+    });
+  })(Checkout.$);
+</script>

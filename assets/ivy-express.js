@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(fetchUrl)
         .then((response) => response.json())
         .then((cartData) => {
-          fetch('https://www.netshake.io/ivy/express/createCheckoutSession.php', {
+          fetch('https://sandbox-netshake.herokuapp.com/checkout/express/create', {
             method: "POST",
             mode: "cors",
             headers: {

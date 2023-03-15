@@ -11,7 +11,7 @@
   "lineItems": [
     {%- for item in cart.items -%}
       {
-        "name": "{{ item.title | escape }}",
+        "name": "{{ item.title }}",
         "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
         "singleVat": 0,
         "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},

@@ -12,7 +12,6 @@ ivy-express-buttin.liquid => snippets
 
 products.ivy.liquid & cart.ivy.liquid => templates
 
-
 **2. Add Ivy Buttons to Theme**
 
 Cart
@@ -28,11 +27,20 @@ PDP
 ```
 
 Checkout
+
 ```liquid
 {% render 'ivy-express-button', type: 'cart', is_checkout: true %}
 ```
 
-**3. Add script to "Additional Checkout Scripts"**
+**5. Add Ivy to the normal Checkout**
+
+Add the following code snippet to the `checkout.liquid` to enable your customers to pay green.
+
+```liquid
+{% render 'ivy-checkout' %}
+```
+
+**4. Add script to "Additional Checkout Scripts"**
 
 ```liquid
 {% if order.attributes["first_time_accessed"] %}
