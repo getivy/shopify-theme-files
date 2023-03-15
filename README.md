@@ -7,17 +7,17 @@ In order to integrate Ivy into your Shopify Plus store, please follow these step
 Please add the theme files from this repository to the corresponding folders:
 
 assets
-├── ivy-express.js
+|--- ivy-express.js
 ...
 
 snippets
-├── ivy-express-button.liquid
-├── ivy-checkout.liquid
+|--- ivy-express-button.liquid
+|--- ivy-checkout.liquid
 ...
 
 templates
-├── products.ivy.liquid
-├── cart.ivy.liquid
+|--- products.ivy.liquid
+|--- cart.ivy.liquid
 ...
 
 **2. Add Ivy Buttons to Theme**
@@ -40,9 +40,9 @@ Checkout
 {% render 'ivy-express-button', type: 'cart', is_checkout: true %}
 ```
 
-**5. Add Ivy to the normal Checkout**
+**3. Add Ivy to the Standard Checkout**
 
-Add the following code snippet to the `checkout.liquid` to enable your customers to pay green.
+Add the following code snippet to the `checkout.liquid` to enable your customers to pay green in the checkout.
 
 ```liquid
 {% render 'ivy-checkout' %}

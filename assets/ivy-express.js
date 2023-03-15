@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(cartData),
           })
           .then((response) => response.json())
-          // .then((checkoutSessionData) => { window.location.href = checkoutSessionData.redirectUrl; })
           .then((checkoutSessionData) => { startIvyCheckout(checkoutSessionData.redirectUrl, 'popup'); })
           .catch((error) => console.error("Error:", error));
         });
