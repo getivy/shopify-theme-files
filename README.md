@@ -8,19 +8,19 @@ Please add the theme files from this repository to the corresponding folders:
 
 ```bash
 assets
-|--- ivy-express.js
+├── ivy-express.js
 ...
 
 snippets
-|--- ivy-express-button.liquid
-|--- ivy-checkout.liquid
+├── ivy-express-button.liquid
+├── ivy-checkout.liquid
 ...
 
 templates
-|--- products.ivy.liquid
-|--- cart.ivy.liquid
+├── products.ivy.liquid
+├── cart.ivy.liquid
 ...
-
+```
 
 **2. Add Ivy Buttons to Theme**
 
@@ -28,6 +28,7 @@ Cart
 
 ```liquid
 {% render 'ivy-express-button', type: 'cart' %}
+
 ```
 
 PDP
