@@ -1,0 +1,11 @@
+# Ignore all
+*
+# Whitelist for all files that should be overwritten
+!.gitignore
+!/assets/ivy-express.css
+!/assets/ivy-express.liquid.js
+!/snippets/ivy-checkout.liquid
+!/snippets/ivy-express-button.liquid
+!/templates/cart.ivy.liquid
+!/templates/product.ivy.liquid
+!README.md
