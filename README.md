@@ -59,7 +59,24 @@ Add the following code snippet to the `checkout.liquid` to enable your customers
             id: {{ order.id }},
         }
 
-        fetch("{ custom_ivy_url }/order/update", { "body": JSON.stringify(data), "method": "POST", "headers": { "Content-Type": "application/json" } });
+        fetch("{{ settings.ivy_gateway_url }}/order/update", { "body": JSON.stringify(data), "method": "POST", "headers": { "Content-Type": "application/json" } });
     </script>
 {% endif %}
+```
+
+**5. Add this to into the array of your your config/settings_schema.json file and exchange {YOUR_SPECIFIC_API_URL} with your api-endpoint:
+```json
+...
+  {
+    "name": "Ivy Settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "ivy_gateway_url",
+        "label": "The shop specific url for the Ivy api",
+        "default": "{YOUR_SPECIFIC_API_URL}"
+      }
+    ]
+  },
+...
 ```

@@ -112,7 +112,7 @@ Uncomment this as soon as you want to go live!
       metadata
     }
 
-    fetch('{ custom_ivy_url }/checkout/standard/create', {
+    fetch('{{ settings.global_shipping_start_cost }}/checkout/standard/create', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
