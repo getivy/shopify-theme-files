@@ -10,7 +10,7 @@
   },
   "lineItems": [
     {
-      "name": "{{ product.title }}{%- unless product.has_only_default_variant -%} {{ product.selected_or_first_available_variant.title }}{%- endunless -%}",
+      "name": "{{ product.title | escape }}{%- unless product.has_only_default_variant -%} {{ product.selected_or_first_available_variant.title | escape }}{%- endunless -%}",
       "singleNet": {{ product.selected_or_first_available_variant.price | times: 1.00 | divided_by: 100 }},
       "singleVat": 0,
       "amount": {{ product.selected_or_first_available_variant.price | times: 1.00 | divided_by: 100 }},
