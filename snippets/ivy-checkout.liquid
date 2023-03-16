@@ -51,7 +51,7 @@ Uncomment this as soon as you want to go live!
         "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},
         "quantity": {{ item.quantity }},
         "referenceId": "{{ item.variant.id }}"
-      }
+      },
       {% endfor %}
     ]
 
@@ -65,7 +65,7 @@ Uncomment this as soon as you want to go live!
         code: "{{ discount.code }}",
         amount: {{ discount.value }},
         title: "{{ discount.title }}"
-      }
+      },
       {% endfor %}
     ]
 
