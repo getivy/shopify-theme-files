@@ -1,23 +1,25 @@
 {% layout none %}
 
 {
-  "price": {
-    "totalNet": {{ cart.items_subtotal_price | times: 1.00 | divided_by: 100 }},
-    "total": {{ cart.items_subtotal_price | times: 1.00 | divided_by: 100 }},
-    "currency": "{{ cart.currency.iso_code }}",
-    "shipping": 0,
-    "vat": 0
-  },
   "lineItems": [
     {%- for item in cart.items -%}
+      {% assign tax = item.price | times: 0.19 | divided_by: 119 %}
       {
         "name": "{{ item.title }}",
-        "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
-        "singleVat": 0,
+        "singleNet": {{ item.price | times: 1.00 | divided_by: 100 | minus: tax }},
+        "singleVat": {{ tax }},
         "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},
         "quantity": {{ item.quantity }},
         "referenceId": {{ item.variant.id }}
       }{%- unless forloop.last -%},{%- endunless -%}
     {%- endfor -%}
-  ]
+  ],
+  {% assign tax = cart.items_subtotal_price | times: 0.19 | divided_by: 119 %}
+  "price": {
+    "totalNet": {{ cart.items_subtotal_price | times: 1.00 | divided_by: 100 | minus: tax }},
+    "total": {{ cart.items_subtotal_price | times: 1.00 | divided_by: 100 }},
+    "currency": "{{ cart.currency.iso_code }}",
+    "shipping": 0,
+    "vat": {{ tax }}
+  }
 }
