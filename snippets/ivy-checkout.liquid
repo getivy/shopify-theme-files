@@ -1,15 +1,11 @@
 <script async src="https://cdn.sand.getivy.de/button.js"></script>
 <script async src="https://cdn.sand.getivy.de/banner.js" onload="initIvy()"></script>
 
-{% comment %}
-Uncomment this as soon as you want to go live!
-
-<script async src="https://cdn.getivy.de/button.js"></script>
-<script async src="https://cdn.getivy.de/banner.js" onload="initIvy()"></script>
-{% endcomment %}
-
 <script>
-  function ivyCheckout() {
+  function getDiscountAndStartCheckout(sessionData) {
+
+    const billingAddress = sessionData.billingAddress
+
     const price = {
       total: {{ checkout.total_price | times: 1.00 | divided_by: 100 }},
       vat: {{ checkout.tax_price | times: 1.00 | divided_by: 100 }},
@@ -19,17 +15,7 @@ Uncomment this as soon as you want to go live!
     }
 
     price.totalNet = price.total - price.vat
-
-    const billingAddress = {
-      firstName: '{{ checkout.billing_address.first_name }}',
-      lastName: '{{ checkout.billing_address.last_name }}',
-      line1: '{{ checkout.billing_address.address1 }}',
-      line2: '{{ checkout.billing_address.address2 }}',
-      city: '{{ checkout.billing_address.city }}',
-      zipCode: '{{ checkout.billing_address.zip }}',
-      country: '{{ checkout.billing_address.country_code }}'
-    }
-
+        
     const prefill = {
       email: '{{ checkout.email }}'
     }
@@ -40,7 +26,6 @@ Uncomment this as soon as you want to go live!
         currency_code: '{{ checkout.currency }}'
       }
     }
-
 
     const lineItems = [
       {% for item in checkout.line_items %}
@@ -112,7 +97,7 @@ Uncomment this as soon as you want to go live!
       metadata
     }
 
-    fetch('{{ settings.global_shipping_start_cost }}/checkout/standard/create', {
+    fetch('{ custom_ivy_url }/checkout/standard/create', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -121,7 +106,53 @@ Uncomment this as soon as you want to go live!
     }).then(response => response.json()).then(data => {
       startIvyCheckout(data.redirectUrl, 'popup')
     })
-  }(function($) {
+  }
+
+  function ivyCheckout() {
+
+    const differentBillingAddress = document.getElementById('checkout_different_billing_address_true').checked
+
+    let billingAddress
+    
+    if (differentBillingAddress === true) {
+      let countryCode
+      const countryElement = document.getElementById('checkout_billing_address_country')
+
+      for (let i = 0; i < countryElement.children.length; i++) {
+        if (countryElement.children[i].value === countryElement.value) {
+          countryCode = countryElement.children[i].dataset.code
+          break
+        }
+      }
+
+      billingAddress = {
+        firstName: document.getElementById('checkout_billing_address_first_name').value,
+        lastName: document.getElementById('checkout_billing_address_last_name').value,
+        line1: document.getElementById('checkout_billing_address_address1').value,
+        line2: document.getElementById('checkout_billing_address_address2').value,
+        city: document.getElementById('checkout_billing_address_city').value,
+        zipCode: document.getElementById('checkout_billing_address_zip').value,
+        country: countryCode
+      }
+    } else {
+      billingAddress = {
+        firstName: '{{ checkout.shipping_address.first_name }}',
+        lastName: '{{ checkout.shipping_address.last_name }}',
+        line1: '{{ checkout.shipping_address.address1 }}',
+        line2: '{{ checkout.shipping_address.address2 }}',
+        city: '{{ checkout.shipping_address.city }}',
+        zipCode: '{{ checkout.shipping_address.zip }}',
+        country: '{{ checkout.shipping_address.country_code }}'
+      }
+    }
+
+    // reload in order to catch the latest checkout liquid object
+    sessionStorage.setItem('onReload', 'doIvyCheckout');
+    sessionStorage.setItem('sessionData', JSON.stringify({ billingAddress }));
+    location.reload();
+  }
+  
+  (function($) {
     $(document).on("page:load page:change", function() {
       if (Shopify.Checkout.step == 'payment_method') {
         const xpath = "//div[@class='section section--payment-method']//label[contains(text(),'Ivy')]"
@@ -131,31 +162,38 @@ Uncomment this as soon as you want to go live!
           const ivyPaymentMethod = document.createElement("div")
           ivyPaymentMethod.className = "ivy-banner"
           ivyPaymentMethod.dataset.variant = "shopify-payment"
+          ivyPaymentMethod.dataset.locale = 'de'
           ivyPaymentLabel
             .replaceWith(ivyPaymentMethod)
-            ivyPaymentMethod
+          ivyPaymentMethod
             .parentElement
             .previousElementSibling
             .style
             .verticalAlign = "middle"
 
           window.initIvy && window.initIvy()
+
+          const ivyWrapper = ivyPaymentMethod.parentElement.parentElement
+          const fieldAbove = document.getElementById('checkout_payment_gateway_{ id of first payment method }').parentElement.parentElement
+          fieldAbove.parentElement.insertBefore(ivyWrapper, fieldAbove)
+          document.getElementById("checkout_payment_gateway_{ id of ivy payment method }").checked = true
         }
-      }
 
-      if (Shopify.Checkout.step == 'review') {
-        const xpath = "//li[@class='payment-method-list__item']/span[contains(text(),'Ivy')]"
-        const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
-        if (ivyPaymentLabel) {
-          ivyPaymentLabel.innerHTML = "Online-Banking"
-
-          $('#continue_button').on('click', function(event) {
+        $('#continue_button').on('click', function(event) {
+          const condition =  document.getElementById("checkout_payment_gateway_{ id of ivy payment method }").checked
+          if (condition === true) {
             event.preventDefault()
             ivyCheckout()
-          })
-        }
+          }
+        })
       }
     });
   })(Checkout.$);
+
+  if (sessionStorage.getItem('onReload') === 'doIvyCheckout') {
+    sessionStorage.setItem('onReload', '');
+    const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
+    sessionStorage.setItem('sessionData', '');
+    getDiscountAndStartCheckout(sessionData);
+  }
 </script>
