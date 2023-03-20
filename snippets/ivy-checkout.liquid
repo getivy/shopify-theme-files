@@ -2,10 +2,10 @@
 <script async src="https://cdn.sand.getivy.de/banner.js" onload="initIvy()"></script>
 
 {% comment %}
-Uncomment this as soon as you want to go live!
+  Uncomment this as soon as you want to go live!
 
-<script async src="https://cdn.getivy.de/button.js"></script>
-<script async src="https://cdn.getivy.de/banner.js" onload="initIvy()"></script>
+  <script async src="https://cdn.getivy.de/button.js"></script>
+  <script async src="https://cdn.getivy.de/banner.js" onload="initIvy()"></script>
 {% endcomment %}
 
 <script>
@@ -131,9 +131,9 @@ Uncomment this as soon as you want to go live!
           const ivyPaymentMethod = document.createElement("div")
           ivyPaymentMethod.className = "ivy-banner"
           ivyPaymentMethod.dataset.variant = "shopify-payment"
+          ivyPaymentLabel.innerText = ''
+          ivyPaymentLabel.appendChild(ivyPaymentMethod)
           ivyPaymentLabel
-            .replaceWith(ivyPaymentMethod)
-            ivyPaymentMethod
             .parentElement
             .previousElementSibling
             .style
