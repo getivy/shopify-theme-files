@@ -109,7 +109,8 @@
       billingAddress,
       prefill,
       lineItems,
-      metadata
+      metadata,
+      errorCallbackUrl: window.location.href
     }
 
     fetch('{{ settings.ivy_gateway_url }}/checkout/standard/create', {
