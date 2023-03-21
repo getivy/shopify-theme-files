@@ -17,7 +17,6 @@ snippets
 ...
 
 templates
-├── products.ivy.liquid
 ├── cart.ivy.liquid
 ...
 ```
