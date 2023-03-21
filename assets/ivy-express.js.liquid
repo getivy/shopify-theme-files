@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("/cart?view=ivy")
         .then((response) => response.json())
         .then((cartData) => {
+          cartData.errorCallbackUrl = window.location.href
+
           fetch('{{ settings.ivy_gateway_url }}/checkout/express/create', {
             method: "POST",
             mode: "cors",
