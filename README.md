@@ -69,7 +69,7 @@ Add the following code snippet to the `checkout.liquid` to enable your customers
 {% endif %}
 ```
 
-\*\*5. Add this to into the array of your your config/settings_schema.json file and exchange {YOUR_SPECIFIC_API_URL} with your api-endpoint:
+**5. Add this to into the array of your your config/settings_schema.json file and exchange {YOUR_SPECIFIC_API_URL} with your api-endpoint:**
 
 ```json
 ...
