@@ -4,7 +4,7 @@
   "lineItems": [
     {%- for item in cart.items -%}
       {
-        "name": "{{ item.title }}",
+        "name": "{{ item.title | escape }}",
         "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
         "singleVat": 0,
         "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},
