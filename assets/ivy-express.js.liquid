@@ -4,43 +4,45 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   expressButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      let fetchUrl = null;
-
-      if (button.dataset.type === "cart") {
-        fetchUrl = "/cart?view=ivy";
-      } else if (
+    button.addEventListener("click", async () => {
+      if (
         button.dataset.type === "product" &&
         button.dataset.product &&
         button.dataset.shopifyVariant
       ) {
-        fetchUrl =
-          "/products/" +
-          button.dataset.product +
-          "?variant=" +
-          button.dataset.shopifyVariant +
-          "&view=ivy";
+        await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: [
+              {
+                id: button.dataset.shopifyVariant,
+                quantity: 1,
+              },
+            ],
+          }),
+        });
       }
 
-      if (fetchUrl !== null) {
-        fetch(fetchUrl)
-          .then((response) => response.json())
-          .then((cartData) => {
-            fetch('{{ settings.ivy_gateway_url }}/checkout/express/create', {
-              method: "POST",
-              mode: "cors",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(cartData),
+      fetch("/cart?view=ivy")
+        .then((response) => response.json())
+        .then((cartData) => {
+          fetch('{{ settings.ivy_gateway_url }}/checkout/express/create', {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(cartData),
+          })
+            .then((response) => response.json())
+            .then((checkoutSessionData) => {
+              startIvyCheckout(checkoutSessionData.redirectUrl, "popup");
             })
-              .then((response) => response.json())
-              .then((checkoutSessionData) => {
-                startIvyCheckout(checkoutSessionData.redirectUrl, "popup");
-              })
-              .catch((error) => console.error("Error:", error));
-          });
-      }
+            .catch((error) => console.error("Error:", error));
+        });
     });
   });
 });
