@@ -16,9 +16,6 @@ snippets
 ├── ivy-checkout.liquid
 ...
 
-templates
-├── cart.ivy.liquid
-...
 ```
 
 **2. Add Ivy Buttons to Theme**
