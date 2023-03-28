@@ -153,10 +153,17 @@
 
           $('#continue_button').on('click', function(event) {
             event.preventDefault()
-            ivyCheckout()
+            // reload in order to catch the latest checkout liquid object
+            sessionStorage.setItem('onReload', 'doIvyCheckout');
+            location.reload();
           })
         }
       }
     });
   })(Checkout.$);
+
+  if (sessionStorage.getItem('onReload') === 'doIvyCheckout') {
+    sessionStorage.removeItem('onReload')
+    ivyCheckout()
+  }
 </script>
