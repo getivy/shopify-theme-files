@@ -43,10 +43,20 @@ Checkout
 
 **3. Add Ivy to the Standard Checkout**
 
-Add the following code snippet to the `checkout.liquid` to enable your customers to pay green in the checkout.
+1. Create a manual payment method with the name "Ivy"
+
+2. Add the following code snippets to the `checkout.liquid` to enable your customers to pay green in the checkout:
+
+If the payment is started after the payment method step:
 
 ```liquid
-{% render 'ivy-checkout' %}
+{% render 'ivy-checkout-pm-step' %}
+```
+
+If the payment is started after the order review step (default Shopify behaviour):
+
+```liquid
+{% render 'ivy-checkout-review-step' %}
 ```
 
 **4. Add script to "Additional Checkout Scripts"**
