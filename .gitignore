@@ -2,10 +2,9 @@
 *
 # Whitelist for all files that should be overwritten
 !.gitignore
-!/assets/ivy-express.css
-!/assets/ivy-express.liquid.js
+!/assets/ivy-express.js.liquid
 !/snippets/ivy-checkout.liquid
+!/snippets/ivy-checkout-review-step.liquid
 !/snippets/ivy-express-button.liquid
-!/templates/cart.ivy.liquid
-!/templates/product.ivy.liquid
+
 !README.md
