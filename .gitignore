@@ -1,5 +1,5 @@
 # Ignore all
-
+*
 # Whitelist for all files that should be overwritten
 !.gitignore
 !/assets/ivy-express.js.liquid
