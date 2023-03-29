@@ -131,6 +131,7 @@
         if (ivyPaymentLabel) {
           const ivyPaymentMethod = document.createElement("div")
           ivyPaymentMethod.className = "ivy-banner"
+          ivyPaymentMethod.dataset.locale = Shopify.locale
           ivyPaymentMethod.dataset.variant = "shopify-payment"
           ivyPaymentLabel.innerText = ''
           ivyPaymentLabel.appendChild(ivyPaymentMethod)
