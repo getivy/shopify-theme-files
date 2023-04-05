@@ -18,7 +18,9 @@ snippets
 
 ```
 
-**2. Add Ivy Buttons to Theme**
+**2. Add Ivy Buttons to your Theme**
+
+Add the following code snippets corresponding to the desired location of the button to your theme:
 
 Cart
 
@@ -31,7 +33,7 @@ PDP
 
 ```liquid
 {%- if product.available %}
-{% render 'ivy-express-button', type: 'product', handle: product.handle, variantId: product.selected_or_first_available_variant.id %}
+  {% render 'ivy-express-button', type: 'product', handle: product.handle, variantId: product.selected_or_first_available_variant.id %}
 {%- endif -%}
 ```
 
@@ -41,13 +43,25 @@ Checkout
 {% render 'ivy-express-button', type: 'cart', is_checkout: true %}
 ```
 
-**3. Add Ivy to the Standard Checkout**
+**3. Add Ivy to the Standard Checkout (Shopify Plus only)**
 
-Add the following code snippet to the `checkout.liquid` to enable your customers to pay green in the checkout.
+1. Create a manual payment method with the name "Ivy"
 
-```liquid
-{% render 'ivy-checkout' %}
-```
+2. Add the following code snippets somewhere to your `checkout.liquid` to enable your customers to pay green in the checkout:
+
+  (a) If the payment is started after the payment method step:
+
+  !Remember to insert the id of ivy payment method in line 173!
+
+  ```liquid
+  {% render 'ivy-checkout-pm-step' %}
+  ```
+
+  (b) If the payment is started after the order review step (default Shopify behaviour):
+
+  ```liquid
+  {% render 'ivy-checkout' %}
+  ```
 
 **4. Add script to "Additional Checkout Scripts"**
 
@@ -67,8 +81,9 @@ Add the following code snippet to the `checkout.liquid` to enable your customers
 
 **5. Add this to into the array of your your config/settings_schema.json file and exchange {YOUR_SPECIFIC_API_URL} with your api-endpoint:**
 
+Please contact the (Ivy support)["mailto:merchant-support@getivy.de"] in order to receive your `YOUR_SPECIFIC_API_URL`.
+
 ```json
-...
   {
     "name": "Ivy Settings",
     "settings": [
@@ -80,5 +95,4 @@ Add the following code snippet to the `checkout.liquid` to enable your customers
       }
     ]
   },
-...
 ```

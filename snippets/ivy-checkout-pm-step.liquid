@@ -1,0 +1,190 @@
+<script async src="https://cdn.sand.getivy.de/button.js"></script>
+<script async src="https://cdn.sand.getivy.de/banner.js" onload="initIvy()"></script>
+
+{% comment %}
+Uncomment this as soon as you want to go live!
+
+<script async src="https://cdn.getivy.de/button.js"></script>
+<script async src="https://cdn.getivy.de/banner.js" onload="initIvy()"></script>
+{% endcomment %}
+
+<script>
+  function getDiscountAndStartCheckout(sessionData) {
+
+    const billingAddress = sessionData.billingAddress
+
+    const price = {
+      total: {{ checkout.total_price | times: 1.00 | divided_by: 100 }},
+      vat: {{ checkout.tax_price | times: 1.00 | divided_by: 100 }},
+      shipping: {{ checkout.shipping_price | times: 1.00 | divided_by: 100 }},
+      currency: '{{ checkout.currency }}',
+      subTotal: {{ checkout.line_items_subtotal_price | times: 1.00 | divided_by: 100 }}
+    }
+
+    price.totalNet = price.total - price.vat
+
+    const prefill = {
+      email: '{{ checkout.email }}'
+    }
+
+    const totalShippingPriceSet = {
+      shop_money: {
+        amount: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
+        currency_code: '{{ checkout.currency }}'
+      }
+    }
+
+    const lineItems = [{% for item in checkout.line_items %}{
+          "name": "{{ item.title }}",
+          "singleNet": {{ item.price | times: 1.00 | divided_by: 100 }},
+          "singleVat": 0,
+          "amount": {{ item.line_price | times: 1.00 | divided_by: 100 }},
+          "quantity": {{ item.quantity }},
+          "referenceId": "{{ item.variant.id }}"
+        },{% endfor %}]
+
+    const discountApplications = [{% for discount in checkout.discount_applications %}{
+          total_allocated_amount: {{ discount.total_allocated_amount | times: 1.00 | divided_by: 100}},
+          target_selection: "{{ discount.target_selection }}",
+          target_type: "{{ discount.target_type }}",
+          type: "{{ discount.value_type }}",
+          code: "{{ discount.code }}",
+          amount: {{ discount.value }},
+          title: "{{ discount.title }}"
+        },{% endfor %}]
+
+    const discountCodes = []
+
+    for (const discount of discountApplications) {
+      lineItems.push({
+        name: discount.title,
+        singleNet: discount.total_allocated_amount * (-1),
+        singleVat: 0,
+        amount: discount.total_allocated_amount * (-1),
+        quantity: 1,
+        referenceId: discount.code
+      })
+
+      discountCodes.push({code: discount.title, amount: discount.total_allocated_amount, type: 'fixed_amount'})
+    }
+
+    const totalDiscounts = {{ checkout.discounts_amount | times: 1.00 | divided_by: 100 }}
+
+    const metadata = {
+      shopifyShippingAddress: {{ checkout.shipping_address | json }},
+      shippingLines: [
+        {
+          price: {{ checkout.shipping_method.price | times: 1.00 | divided_by: 100 }},
+          price_set: {
+            shop_money: totalShippingPriceSet
+          },
+          source: "{{ checkout.shipping_method.handle }}",
+          title: "{{ checkout.shipping_method.title }}"
+        }
+      ],
+      totalShippingPriceSet,
+      email: '{{ checkout.email }}',
+      discountCodes,
+      totalDiscounts
+    }
+
+    const data = {
+      price,
+      billingAddress,
+      prefill,
+      lineItems,
+      metadata
+    }
+
+    fetch('{{ settings.ivy_gateway_url }}/checkout/standard/create', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then(data => {
+      startIvyCheckout(data.redirectUrl, 'popup')
+    })
+  }
+
+  function ivyCheckout() {
+
+    const differentBillingAddress = document.getElementById('checkout_different_billing_address_true').checked
+
+    let billingAddress
+
+    if (differentBillingAddress === true) {
+      let countryCode
+      const countryElement = document.getElementById('checkout_billing_address_country')
+
+      for (let i = 0; i < countryElement.children.length; i++) {
+        if (countryElement.children[i].value === countryElement.value) {
+          countryCode = countryElement.children[i].dataset.code
+          break
+        }
+      }
+
+      billingAddress = {
+        firstName: document.getElementById('checkout_billing_address_first_name').value,
+        lastName: document.getElementById('checkout_billing_address_last_name').value,
+        line1: document.getElementById('checkout_billing_address_address1').value,
+        line2: document.getElementById('checkout_billing_address_address2').value,
+        city: document.getElementById('checkout_billing_address_city').value,
+        zipCode: document.getElementById('checkout_billing_address_zip').value,
+        country: countryCode
+      }
+    } else {
+      billingAddress = {
+        firstName: '{{ checkout.shipping_address.first_name }}',
+        lastName: '{{ checkout.shipping_address.last_name }}',
+        line1: '{{ checkout.shipping_address.address1 }}',
+        line2: '{{ checkout.shipping_address.address2 }}',
+        city: '{{ checkout.shipping_address.city }}',
+        zipCode: '{{ checkout.shipping_address.zip }}',
+        country: '{{ checkout.shipping_address.country_code }}'
+      }
+    }
+
+    sessionStorage.setItem('onReload', 'doIvyCheckout');
+    sessionStorage.setItem('sessionData', JSON.stringify({billingAddress}));
+    location.reload();
+  }(function($) {
+    $(document).on("page:load page:change", function() {
+      if (Shopify.Checkout.step == 'payment_method') {
+        const xpath = "//div[@class='section section--payment-method']//label[contains(text(),'Ivy')]"
+        const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+
+        if (ivyPaymentLabel) {
+          const ivyPaymentMethod = document.createElement("div")
+          ivyPaymentMethod.className = "ivy-banner"
+          ivyPaymentMethod.dataset.variant = "shopify-payment"
+          ivyPaymentMethod.dateset.locale = "{{ request.locale.iso_code }}"
+          ivyPaymentLabel.innerText = ''
+          ivyPaymentLabel.appendChild(ivyPaymentMethod)
+          ivyPaymentLabel
+            .parentElement
+            .previousElementSibling
+            .style
+            .verticalAlign = "middle"
+
+          window.initIvy && window.initIvy()
+        }
+
+        $('#continue_button').on('click', function(event) {
+          const condition = document.getElementById("checkout_payment_gateway_{ id of ivy payment method }").checked
+          if (condition === true) {
+            event.preventDefault()
+            ivyCheckout()
+          }
+        })
+
+        if (sessionStorage.getItem('onReload') === 'doIvyCheckout') {
+          sessionStorage.setItem('onReload', '');
+          const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
+          sessionStorage.setItem('sessionData', '');
+          getDiscountAndStartCheckout(sessionData);
+        }
+      }
+  });
+})(Checkout.$);
+</script>
