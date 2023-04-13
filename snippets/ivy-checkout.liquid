@@ -127,11 +127,23 @@
       if (Shopify.Checkout.step == 'payment_method') {
         const xpath = "//div[@class='section section--payment-method']//label[contains(text(),'Ivy')]"
         const ivyPaymentLabel = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-
+        
         if (ivyPaymentLabel) {
+          const id_collection = [
+            {% for item in checkout.line_items %}
+              {% for collection in item.product.collections %}
+                "{{ collection.id }}",
+              {% endfor %}
+            {% endfor %}
+          ]
+
+          if (id_collection.includes("294805930178")) {
+            ivyPaymentLabel.parentElement.parentElement.remove()
+            return
+          }
+
           const ivyPaymentMethod = document.createElement("div")
           ivyPaymentMethod.className = "ivy-banner"
-          ivyPaymentMethod.dataset.locale = Shopify.locale
           ivyPaymentMethod.dataset.variant = "shopify-payment"
           ivyPaymentMethod.dateset.locale = "{{ request.locale.iso_code }}"
           ivyPaymentLabel.innerText = ''
