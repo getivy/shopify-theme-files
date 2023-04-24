@@ -33,7 +33,7 @@ PDP
 
 ```liquid
 {%- if product.available %}
-  {% render 'ivy-express-button', type: 'product', handle: product.handle, variantId: product.selected_or_first_available_variant.id %}
+  {% render 'ivy-express-button', type: 'product' %}
 {%- endif -%}
 ```
 
