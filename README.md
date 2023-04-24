@@ -81,7 +81,7 @@ Checkout
 
 **5. Add this to into the array of your your config/settings_schema.json file and exchange {YOUR_SPECIFIC_API_URL} with your api-endpoint:**
 
-Please contact the (Ivy support)["mailto:merchant-support@getivy.de"] in order to receive your `YOUR_SPECIFIC_API_URL`.
+Please contact the [Ivy support]("mailto:merchant-support@getivy.de") in order to receive your `YOUR_SPECIFIC_API_URL`.
 
 ```json
   {
