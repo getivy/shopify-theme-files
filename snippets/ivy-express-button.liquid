@@ -1,4 +1,57 @@
 {% assign is_checkout = is_checkout | default: false %}
-<button type="button" class="ivy-express-checkout ivy-checkout-button" data-locale="{{ request.locale.iso_code }}" data-type="{{ type }}"
-  {% if type == 'product' %}data-product="{{ handle }}" data-shopify-variant="{{ variantId }}"{% endif %}
+<script async src="https://cdn.getivy.de/button.js"></script>
+
+<script>
+  async function startCheckout(type){
+      if (
+        type === "product"
+      ) {
+
+        var variant = (new URL(document.location)).searchParams.get("variant") ?? "{{ product.selected_or_first_available_variant.id }}"
+        
+        const productVariants = {{ product.variants | json }}
+        const currentVariant = productVariants.find((v) => v.id.toString() === variant.toString())
+
+        if (!currentVariant || currentVariant.available === false) {
+          return
+        }
+
+        await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: [
+              {
+                id: variant.toString(),
+                quantity: 1,
+              },
+            ],
+          }),
+        });
+      }
+
+      await fetch("/cart.json")
+        .then((response) => response.json())
+        .then((cartData) => {
+          cartData.errorCallbackUrl = window.location.href
+
+          fetch('{{ settings.ivy_gateway_url }}/checkout/express/create', {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(cartData),
+          })
+            .then((response) => response.json())
+            .then((checkoutSessionData) => {
+              startIvyCheckout(checkoutSessionData.redirectUrl, "popup");
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    }
+</script>
+<button type="button" onclick='startCheckout("{{ type }}")'  class="ivy-express-checkout ivy-checkout-button" data-locale="{{ request.locale.iso_code }}"
   {% if is_checkout %}data-position="above"{% endif %}></button> 
