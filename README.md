@@ -56,7 +56,7 @@ Paste the following code snippet into the "Additional Checkout Scripts" section 
 
 **7. Activate the App**
 
-Now that you have added all necessary code snippets, you need to retrieve all relevant secrets in order to go live. Please Contact the [Ivy support]('https://form.typeform.com/to/ljnbWyS2') in order to finish up the integration.
+Now that you have added all necessary code snippets, you need to retrieve all relevant secrets in order to go live. Please Contact the [Ivy support](https://form.typeform.com/to/ljnbWyS2) in order to finish up the integration.
 
 **OPTIONAL: Add Ivy to the Standard Checkout (Shopify Plus only)**
 
