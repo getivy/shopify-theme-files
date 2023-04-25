@@ -131,7 +131,6 @@
         if (ivyPaymentLabel) {
           const ivyPaymentMethod = document.createElement("div")
           ivyPaymentMethod.className = "ivy-banner"
-          ivyPaymentMethod.dataset.locale = Shopify.locale
           ivyPaymentMethod.dataset.variant = "shopify-payment"
           ivyPaymentMethod.dateset.locale = "{{ request.locale.iso_code }}"
           ivyPaymentLabel.innerText = ''
