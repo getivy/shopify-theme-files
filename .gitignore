@@ -5,5 +5,6 @@
 !/snippets/ivy-checkout.liquid
 !/snippets/ivy-checkout-pm-step.liquid
 !/snippets/ivy-express-button.liquid
+!/snippets/ivy-banner.liquid
 
 !README.md
