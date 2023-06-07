@@ -32,8 +32,45 @@ PDP
 
 Checkout
 
+Place the following code underneath the `{{ alternative_payment_methods }}` snippet in the checkout.liquid file:
+
 ```liquid
-{% render 'ivy-express-button', type: 'cart', is_checkout: true %}
+{% if content_for_layout contains 'data-step="contact_information"' %}
+  <li id="ivy_express_button_container" style="display: none">
+    {% render 'ivy-express-button', type: 'cart', is_checkout: true %}
+  </li>
+  <style>
+    .ivy-checkout-button {
+      margin-top: 0;
+      margin-bottom: 13px;
+    }
+    @media screen and (max-width: 749px) {
+      .ivy-checkout-button {
+        margin-top: 8px;
+      }
+    }
+  </style>
+  <script>
+    (function($) {
+      $(document).on("page:load page:change", function() {
+        const elementToObserve = document.querySelector(".dynamic-checkout");
+      
+        const observer = new MutationObserver(() => {
+          let shopify_express_buttons = document.querySelector(".dynamic-checkout__buttons ul");
+          let check_for_ivy_button = document.querySelector(".dynamic-checkout__buttons ul #ivy_express_button_container");
+          if(shopify_express_buttons !== null && check_for_ivy_button === null) {
+            let ivy_express_button_container = document.getElementById("ivy_express_button_container");
+            ivy_express_button_container.remove();
+            ivy_express_button_container.style = null;
+            shopify_express_buttons.appendChild(ivy_express_button_container);
+          }
+        });
+        
+        observer.observe(elementToObserve, { subtree: true, childList: true });
+      });
+    })(Checkout.$);
+  </script>
+{% endif %}
 ```
 
 **5. Add script to "Additional Checkout Scripts"**
