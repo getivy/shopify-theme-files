@@ -93,7 +93,8 @@ Uncomment this as soon as you want to go live!
       billingAddress,
       prefill,
       lineItems,
-      metadata
+      metadata,
+      errorCallbackUrl = window.location.href
     }
 
     fetch('{{ settings.ivy_gateway_url }}/checkout/standard/create', {
