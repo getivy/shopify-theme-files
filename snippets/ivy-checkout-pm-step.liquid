@@ -179,6 +179,7 @@ Uncomment this as soon as you want to go live!
         })
 
         if (sessionStorage.getItem('onReload') === 'doIvyCheckout') {
+          document.getElementById("checkout_payment_gateway_{ id of ivy payment method }").checked = true;
           sessionStorage.setItem('onReload', '');
           const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
           sessionStorage.setItem('sessionData', '');
