@@ -94,7 +94,7 @@ Uncomment this as soon as you want to go live!
       prefill,
       lineItems,
       metadata,
-      errorCallbackUrl = window.location.href
+      errorCallbackUrl: window.location.href
     }
 
     fetch('{{ settings.ivy_gateway_url }}/checkout/standard/create', {
