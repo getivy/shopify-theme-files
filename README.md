@@ -122,3 +122,19 @@ snippets
   ```liquid
   {% render 'ivy-checkout-pm-step' %}
   ```
+
+4. OPTIONAL - Manually trigger a variant selection.
+  Some shops will have a variant selection form that will not automatically update the selected variant in the liquid checkout state. Therefore, in some cases, you might need to do this manually. If you encounter this issue, you can adjust the URL search params to include a `variant` property. For example:
+  ```liquid
+<div
+  onclick="selectVariant('{{ all_products[product.handle].variants[variant_index].id }}')"  
+>...</div>
+<script>
+  function selectVariant(variantId) {
+    var searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("variant", variantId);
+    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + searchParams.toString();
+    window.history.pushState({path:newUrl},'',newUrl);
+  }
+</script>
+```
